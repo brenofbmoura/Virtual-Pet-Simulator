@@ -1,43 +1,87 @@
-# Virtual Pet Simulator 🐾
+class VirtualPet(val nome: String) {
+    var nivelDeFome = 50
+    var nivelFelicidade = 50
+    var nivelCansaco = 50
+    var nivelIdade = 1
 
-Um simulador de animal de estimação virtual desenvolvido em Kotlin como projeto de aprendizado.
+    fun alimentar() {
+        nivelDeFome -= 10
+        println("$nome foi alimentado. O nível de fome diminuiu.")
+    }
 
-## 📋 Sobre o Projeto
+    fun brincar() {
+        nivelFelicidade += 10
+        println("$nome está brincando e se sentindo mais feliz.")
+        nivelCansaco += 10
+        println("$nome está mais feliz e sente mais cansado.")
+    }
 
-O jogador escolhe um nome para seu pet e deve cuidar dele realizando ações como alimentar,
-brincar e fazer o pet descansar. O objetivo é manter o pet vivo e feliz até ele atingir
-a idade 50.
+    fun descansar() {
+        println("Por quantas horas você gostaria que $nome descansasse? (1 - 8 horas)")
+        val resposta = readLine()?.toIntOrNull()
+        if (resposta == null || resposta < 1 || resposta > 8) {
+            println("Opção inválida! Digite um número entre 1 e 8.")
+        } else {
+            nivelCansaco -= resposta * 10
+            println("$nome descansou $resposta hora(s). Nível de cansaço diminuiu!")
+        }
+    }
 
-## 🎮 Como Jogar
+    fun verificarStatus() {
+        println("Status atual de $nome:")
+        println("Nível de fome: $nivelDeFome")
+        println("Nível de felicidade: $nivelFelicidade")
+        println("Nível de cansaço: $nivelCansaco")
+        println("Idade: $nivelIdade")
+    }
 
-1. Execute o programa e digite o nome do seu pet
-2. Escolha uma ação a cada turno:
-   - **Alimentar** → reduz o nível de fome
-   - **Brincar** → aumenta a felicidade, mas também o cansaço
-   - **Descansar** → reduz o cansaço (de 1 a 8 horas)
-   - **Verificar status** → exibe os níveis atuais do pet
-3. A cada ação, o tempo passa e os níveis se alteram automaticamente
+    fun passarTempo(): Boolean {
+        nivelDeFome += 3
+        println("$nome está ficando mais faminto com o passar do tempo.")
+        nivelFelicidade -= 3
+        println("$nome está se sentindo sozinho ao passar do tempo.")
+        nivelCansaco += 10
+        println("$nome está se sentindo mais cansado ao passar do tempo.")
+        nivelIdade += 1
 
-## 💀 Condições de Derrota
+        return when {
+            nivelCansaco >= 100  -> { println("Você perdeu! $nome morreu de cansaço. Seu irresponsável!!!"); false }
+            nivelDeFome >= 100   -> { println("Você perdeu! $nome morreu de fome. Seu irresponsável!!!"); false }
+            nivelFelicidade <= 0 -> { println("Você perdeu! $nome morreu de depressão. Seu irresponsável!!!"); false }
+            nivelIdade >= 50     -> { println("Você ganhou! Parabéns por cuidar bem de $nome!"); false }
+            else -> true
+        }
+    }
+}  // ← fecha a classe VirtualPet
 
-- Nível de fome ≥ 100 → pet morre de fome
-- Nível de cansaço ≥ 100 → pet morre de cansaço
-- Nível de felicidade ≤ 0 → pet morre de depressão
+fun main() {
+    println("Bem-vindo ao Simulador de Animal de Estimação Virtual!")
+    println("Digite o nome do seu animal de estimação:")
+    val nomePet = readLine() ?: ""
+    val pet = VirtualPet(nomePet)
 
-## 🏆 Condição de Vitória
+    while (true) {
+        println("\nEscolha uma ação:")
+        println("1. Alimentar $nomePet")
+        println("2. Brincar com $nomePet")
+        println("3. Fazer que $nomePet descanse")
+        println("4. Verificar o status de $nomePet")
+        println("5. Sair")
 
-- Pet atinge a idade 50 sem morrer
+        val escolha = readLine()?.toIntOrNull() ?: continue
 
-## 🛠️ Tecnologias
+        when (escolha) {
+            1 -> pet.alimentar()
+            2 -> pet.brincar()
+            3 -> pet.descansar()
+            4 -> pet.verificarStatus()
+            5 -> {
+                println("Saindo do Simulador de Animal de Estimação Virtual. Adeus!")
+                return
+            }
+            else -> println("Escolha inválida. Tente novamente.")
+        }
 
-- [Kotlin](https://kotlinlang.org/)
-
-## ▶️ Como Executar
-```bash
-# Clone o repositório
-git clone https://github.com/brenofbmoura/virtual-pet-simulator
-
-# Execute com o compilador Kotlin
-kotlinc VirtualPet.kt -include-runtime -d VirtualPet.jar
-java -jar VirtualPet.jar
-```
+        if (!pet.passarTempo()) return
+    }
+}
