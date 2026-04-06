@@ -52,7 +52,7 @@ class VirtualPet(val nome: String) {
             else -> true
         }
     }
-}  // ← fecha a classe VirtualPet
+}
 
 fun main() {
     println("Bem-vindo ao Simulador de Animal de Estimação Virtual!")
